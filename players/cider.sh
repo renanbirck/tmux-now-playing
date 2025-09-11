@@ -13,8 +13,20 @@ parse_json() {
   printf '%s' "$1" | jq -rc "$2"
 }
 
+http_req() {
+  curl -sSL -X "$1" "$CIDER_HOST:$CIDER_PORT/api/v1/playback$2"
+}
+
+http_get() {
+  http_req GET "$1"
+}
+
+http_post() {
+  http_req POST "$1"
+}
+
 cider() {
-  parse_json "$(curl -sSL "$CIDER_HOST:$CIDER_PORT/api/v1/playback$1")" "$2"
+  parse_json "$(http_get "$1")" "$2"
 }
 
 is_running() {
@@ -71,5 +83,14 @@ get_music_data() {
 }
 
 send_command() {
-  sh -c "(printf \"$1\nclose\n\"; sleep 0.05) | nc \"$CIDER_HOST\" \"$CIDER_PORT\"" > /dev/null
+  local remote_command="$1"
+  if test "$remote_command" = "pause"; then
+    http_post /playpause >/dev/null
+  elif test "$remote_command" = "stop"; then
+    http_post /stop >/dev/null
+  elif test "$remote_command" = "previous"; then
+    http_post /previous >/dev/null
+  elif test "$remote_command" = "next"; then
+    http_post /next >/dev/null
+  fi
 }
