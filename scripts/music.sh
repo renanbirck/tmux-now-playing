@@ -8,6 +8,7 @@ source "$CURRENT_DIR/shada.sh"
 
 players=(
   "$(dirname "$CURRENT_DIR")/players/nowplaying-cli.sh"
+  "$(dirname "$CURRENT_DIR")/players/cider.sh"
   "$(dirname "$CURRENT_DIR")/players/mpd.sh"
   "$(dirname "$CURRENT_DIR")/players/applescript.sh"
   "$(dirname "$CURRENT_DIR")/players/cscript.sh"
@@ -29,7 +30,7 @@ send_command() {
 replace() {
   local str="$1"
   local find="$2"
-  local replacement="${3//&/\\&}"
+  local replacement="$3"
   printf '%s' "${str//$find/$replacement}"
 }
 
